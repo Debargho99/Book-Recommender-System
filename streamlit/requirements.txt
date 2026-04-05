@@ -1,0 +1,6 @@
+altair
+pandas
+streamlit
+pillow
+numpy
+matplotlib
