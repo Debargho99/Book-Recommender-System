@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+  dvc:
+    build:
+      context: .
+      dockerfile: docker/dvc/Dockerfile    
+    volumes:
+      - .:/app                      
+    env_file:
+      - .env                        
+    environment:
+      # DVC settings only
+      DVC_REMOTE:     "${DVC_REMOTE:-origin}"
+      # DAGsHub credentials
+      DAGSHUB_USER:   "${DAGSHUB_USER}"
+      DAGSHUB_TOKEN:  "${DAGSHUB_TOKEN}"
+      # Process options
+      SKIP_TRAINING_WAIT: "${SKIP_TRAINING_WAIT:-true}"
+      # Python settings
+      PYTHONUNBUFFERED: "1"
+      PYTHONPATH:      "/app"
+    # Keep container running for debugging
+    
+    networks:
+      - mlops-network
+
+networks:
+  mlops-network:
+    driver: bridge

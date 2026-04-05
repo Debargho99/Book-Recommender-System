@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  model-training:
+    build:
+      context: .
+      dockerfile: docker/model-training/Dockerfile
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
+      - ./logs:/app/logs
+    environment:
+      - PYTHONPATH=/app
+      - MLFLOW_TRACKING_URI=https://dagshub.com/pepperumo/MLOps_book_recommender_system.mlflow
+      - MLFLOW_TRACKING_USERNAME=${MLFLOW_TRACKING_USERNAME}
+      - MLFLOW_TRACKING_PASSWORD=${MLFLOW_TRACKING_PASSWORD}
+      - DAGSHUB_USERNAME=${DAGSHUB_USERNAME}
+      - DAGSHUB_TOKEN=${DAGSHUB_TOKEN}
+    networks:
+      - mlops-network
+    healthcheck:
+      test: ["CMD", "test", "-f", "/app/models/training_complete"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    restart: on-failure
+
+networks:
+  mlops-network:
+    name: mlops-network
+    driver: bridge
